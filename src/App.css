@@ -1,0 +1,96 @@
+body {}
+
+.svg {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  z-index: -2;
+}
+
+.main {
+  text-align: center;
+
+}
+
+h1 {
+  color: rgb(0, 0, 0);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  padding: 20px;
+}
+
+.label {
+  font-size: 20px;
+}
+
+input {
+  width: 100%;
+  height: 30px;
+  margin-top: 10px;
+  padding-left: 10px;
+  margin-left: -10px;
+}
+
+.item {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+  text-align: start;
+}
+
+.mmm {
+  display: flex;
+  justify-content: center;
+}
+
+.main_items {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  gap: 20px;
+  padding: 40px;
+  background: white;
+
+
+}
+
+.rus {
+  font-size: 18px;
+}
+
+.btn {
+  width: fit-content;
+  padding: 0px 20px;
+  background: #d06363;
+  color: white;
+  font-size: 17px;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px;
+  cursor: pointer;
+  position: fixed;
+  top: 0;
+  right: 0;
+  border: none;
+
+}
+
+.btns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 200px;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  padding: 40px;
+}
