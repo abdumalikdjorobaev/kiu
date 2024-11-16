@@ -158,7 +158,6 @@ const DocxEditor = () => {
                             <input
                                 type={getInputType(key)} // Динамически устанавливаем тип
                                 name={key} // Имя инпута, которое будет соответствовать ключу в состоянии
-                                value={formData[key]} // Значение инпута из состояния
                                 onChange={handleInputChange} // Обработчик изменения значения
                                 placeholder={`Введите ${translateLabel(key)}`} // Переводим placeholder
                             />
