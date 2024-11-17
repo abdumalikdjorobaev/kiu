@@ -11,7 +11,6 @@ body {}
 
 .main {
   text-align: center;
-
 }
 
 h1 {
@@ -51,13 +50,12 @@ input {
 .main_items {
   display: flex;
   justify-content: center;
-  flex-direction: column;
+  flex-wrap: wrap;
   text-align: center;
   gap: 20px;
   padding: 40px;
+  margin: 40px;
   background: white;
-
-
 }
 
 .rus {
@@ -75,10 +73,9 @@ input {
   margin: 20px;
   cursor: pointer;
   position: fixed;
-  top: 0;
+  bottom: 0;
   right: 0;
   border: none;
-
 }
 
 .btns {
@@ -88,7 +85,7 @@ input {
   width: 100%;
   max-width: 200px;
   position: fixed;
-  top: 0;
+  bottom: 0;
   right: 0;
   bottom: 0;
   z-index: -1;

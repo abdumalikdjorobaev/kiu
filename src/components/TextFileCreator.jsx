@@ -147,7 +147,6 @@ const DocxEditor = () => {
     return (
         <div className='main'>
             <div className='svg'><img src={Svg} alt="" /></div>
-            <h1>Заявка на поступление в KIU</h1>
 
             {/* Инпуты для ввода данных */}
             <div className='mmm'>
@@ -162,7 +161,7 @@ const DocxEditor = () => {
                                 placeholder={`Введите ${translateLabel(key)}`} // Переводим placeholder
                             />
                         </div>
-                        
+
                     ))}
                 </div>
             </div>
@@ -179,12 +178,12 @@ const DocxEditor = () => {
             {/* Кнопка для открытия выбора файла */}
             <button className='btn' onClick={() => document.getElementById('handleFileUpload').click()}>Выберите файл жен KIU.docx</button>
             <button className='btn' style={{
-                top: '80px'
+                bottom: '80px'
             }} onClick={() => document.getElementById('handleFileUpload').click()}>Выберите файл муж KIU.docx</button>
 
             {/* Кнопка для замены текста в .docx */}
             <button style={{
-                top: '170px'
+                bottom: '170px'
             }} className='btn' onClick={handleReplaceTextInDocx}>Заменить данные в .docx</button>
         </div>
     );
