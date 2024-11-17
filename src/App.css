@@ -72,9 +72,7 @@ input {
   padding: 20px;
   margin: 20px;
   cursor: pointer;
-  position: fixed;
-  bottom: 0;
-  right: 0;
+ 
   border: none;
 }
 
@@ -84,10 +82,7 @@ input {
   gap: 10px;
   width: 100%;
   max-width: 200px;
-  position: fixed;
-  bottom: 0;
-  right: 0;
-  bottom: 0;
+ flex-wrap: wrap;
   z-index: -1;
   padding: 40px;
 }

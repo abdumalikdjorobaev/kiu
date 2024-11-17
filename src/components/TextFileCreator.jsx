@@ -5,32 +5,41 @@ import Docxtemplater from 'docxtemplater';
 import Svg from '../style/bg.svg';
 
 const DocxEditor = () => {
-    // Получаем текущий год динамически
-    const currentYear = new Date().getFullYear();
+    // Получаем текущий год, месяц и день
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // Месяцы от 0 до 11
+    const currentDay = currentDate.getDate();
+    const currentDayString = `${currentYear} ${currentMonth < 10 ? '0' + currentMonth : currentMonth} ${currentDay < 10 ? '0' + currentDay : currentDay}`;
 
-    // Состояния для хранения значений из инпутов
-    const [docxFile, setDocxFile] = useState(null);
-
-    // Данные для динамических инпутов с начальными значениями
+    // Состояние для хранения всех данных (человек и спонсор)
     const [formData, setFormData] = useState({
-        currentYear: currentYear.toString(), // Текущий год
-        name: 'ABDUMALIK',
-        surname: 'DZHOROBAEV',
-        fullNameKorean: '조로바예프 압두말리크',
-        birthYear: '2007',
-        birthMonth: '04',
-        birthDay: '09',
-        passportNumber: 'PE1292077',
-        phoneNumber: '+996551014109',
-        email: 'abdumalikdzhorobaev@gmail.com',
-        address: 'Kyrgyzstan, Osh region',
-        school: 'Ubileynaya',
-        studyFromYear: '2012',
-        studyToYear: '2023',
-        fatherSurname: 'ABDURAZAKOV',
-        fatherName: 'SHAVKAT',
-        aboutYourSelf: 'i am human dwqdqwd qwd qw d qwd wq dqwdqwdqwd qw dqw d qw dq wd qw d qwdqwjdnjqwndnqjdwq dq wdjqwndjqwdnjqw dqw d qwd qw dqw  dqwndjqwndnqjwdnjqwd qw dq wd qw dw '
+        name: '',
+        surname: '',
+        fullNameKorean: '',
+        birthYear: '',
+        birthMonth: '',
+        birthDay: '',
+        passportNumber: '',
+        phoneNumber: '',
+        email: '',
+        address: '',
+        school: '',
+        studyFromYear: '',
+        studyFromMonth: '',
+        studyToYear: '',
+        studyToMonth: '',
+        sponsorSurname: '',
+        sponsorName: '',
+        aboutYourSelf: '',
+        WhoYourSponsor: '',
+        SponsorOccupation: '',
+        sponsorPhoneNumber: '',
+        sponsorAddress: ''
     });
+
+    // Состояние для хранения выбранного .docx файла
+    const [docxFile, setDocxFile] = useState(null);
 
     // Функция для обработки изменения значений в инпуте
     const handleInputChange = (e) => {
@@ -51,6 +60,27 @@ const DocxEditor = () => {
         }
     };
 
+    // Функция для вычисления periodOfStudy в месяцах
+    const calculatePeriodOfStudy = () => {
+        const { studyFromYear, studyFromMonth, studyToYear, studyToMonth } = formData;
+
+        if (studyFromYear && studyFromMonth && studyToYear && studyToMonth) {
+            // Преобразуем года и месяца в Date объекты для вычисления разницы
+            const startDate = new Date(studyFromYear, studyFromMonth - 1); // Месяцы от 0 до 11
+            const endDate = new Date(studyToYear, studyToMonth - 1);
+
+            // Получаем разницу в месяцах
+            const yearsDiff = endDate.getFullYear() - startDate.getFullYear();
+            const monthsDiff = endDate.getMonth() - startDate.getMonth();
+
+            // Рассчитываем полное количество месяцев
+            const totalMonths = yearsDiff * 12 + monthsDiff;
+
+            return totalMonths;
+        }
+        return '';
+    };
+
     // Обработчик замены текста в .docx файле
     const handleReplaceTextInDocx = async () => {
         // Проверка на загрузку файла и заполнение всех полей формы
@@ -64,6 +94,17 @@ const DocxEditor = () => {
             return;
         }
 
+        // Вычисляем periodOfStudy в месяцах
+        const periodOfStudy = calculatePeriodOfStudy();
+
+        // Создаем объект данных для отправки, добавляя вычисленные поля
+        const updatedFormData = {
+            ...formData,
+            periodOfStudy: periodOfStudy, // Добавляем вычисленный период обучения
+            currentYear: currentYear.toString(), // Добавляем текущий год
+            currentDay: currentDayString // Добавляем текущий день
+        };
+
         try {
             const zip = await loadDocxFile(docxFile);
 
@@ -71,7 +112,7 @@ const DocxEditor = () => {
             const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
 
             // Передаем данные для замены в шаблон
-            doc.setData(formData);
+            doc.setData(updatedFormData);
 
             // Рендерим новый .docx
             doc.render();
@@ -101,29 +142,9 @@ const DocxEditor = () => {
         });
     };
 
-    // Функция для определения типа инпута в зависимости от ключа
-    const getInputType = (key) => {
-        switch (key) {
-            case 'email':
-                return 'email';
-            case 'phoneNumber':
-                return 'tel';
-            case 'birthYear':
-            case 'birthMonth':
-            case 'birthDay':
-            case 'studyFromYear':
-            case 'studyToYear':
-            case 'currentYear':
-                return 'number';
-            default:
-                return 'text';
-        }
-    };
-
     // Перевод меток на русский
     const translateLabel = (key) => {
         const labels = {
-            currentYear: 'Текущий год',
             name: 'Имя (английский)',
             surname: 'Фамилия (английский)',
             fullNameKorean: 'Полное имя (корейский)',
@@ -136,13 +157,45 @@ const DocxEditor = () => {
             address: 'Адрес',
             school: 'Школа',
             studyFromYear: 'Год начала учебы',
+            studyFromMonth: 'Месяц начала учебы',
             studyToYear: 'Год окончания учебы',
-            fatherSurname: 'Фамилия отца',
-            fatherName: 'Имя отца',
-            aboutYourSelf: 'О себе'
+            studyToMonth: 'Месяц окончания учебы',
+            sponsorSurname: 'Фамилия спонсора',
+            sponsorName: 'Имя спонсора',
+            aboutYourSelf: 'О себе',
+            WhoYourSponsor: 'Кто ваш спонсор?',
+            SponsorOccupation: 'Род деятельности спонсора',
+            sponsorPhoneNumber: 'Телефон спонсора',
+            sponsorAddress: 'Адрес спонсора'
         };
         return labels[key] || key; // Если нет перевода, возвращаем исходный ключ
     };
+
+    // Массив всех полей
+    const inputFields = [
+        { name: 'name', label: 'name' },
+        { name: 'surname', label: 'surname' },
+        { name: 'fullNameKorean', label: 'fullNameKorean' },
+        { name: 'birthYear', label: 'birthYear' },
+        { name: 'birthMonth', label: 'birthMonth' },
+        { name: 'birthDay', label: 'birthDay' },
+        { name: 'passportNumber', label: 'passportNumber' },
+        { name: 'phoneNumber', label: 'phoneNumber' },
+        { name: 'email', label: 'email' },
+        { name: 'address', label: 'address' },
+        { name: 'school', label: 'school' },
+        { name: 'studyFromYear', label: 'studyFromYear' },
+        { name: 'studyFromMonth', label: 'studyFromMonth' },
+        { name: 'studyToYear', label: 'studyToYear' },
+        { name: 'studyToMonth', label: 'studyToMonth' },
+        { name: 'sponsorSurname', label: 'sponsorSurname' },
+        { name: 'sponsorName', label: 'sponsorName' },
+        { name: 'aboutYourSelf', label: 'aboutYourSelf' },
+        { name: 'WhoYourSponsor', label: 'WhoYourSponsor' },
+        { name: 'SponsorOccupation', label: 'SponsorOccupation' },
+        { name: 'sponsorPhoneNumber', label: 'sponsorPhoneNumber' },
+        { name: 'sponsorAddress', label: 'sponsorAddress' }
+    ];
 
     return (
         <div className='main'>
@@ -151,17 +204,17 @@ const DocxEditor = () => {
             {/* Инпуты для ввода данных */}
             <div className='mmm'>
                 <div className='main_items'>
-                    {Object.keys(formData).map((key) => (
-                        <div className='item' key={key}>
-                            <label className='rus'>{translateLabel(key)}</label> {/* Переводим метки */}
+                    {inputFields.map((field) => (
+                        <div className='item' key={field.name}>
+                            <label className='rus'>{translateLabel(field.label)}</label>
                             <input
-                                type={getInputType(key)} // Динамически устанавливаем тип
-                                name={key} // Имя инпута, которое будет соответствовать ключу в состоянии
-                                onChange={handleInputChange} // Обработчик изменения значения
-                                placeholder={`Введите ${translateLabel(key)}`} // Переводим placeholder
+                                type="text"
+                                name={field.name}
+                                value={formData[field.name]}
+                                onChange={handleInputChange}
+                                placeholder={`Введите ${translateLabel(field.label)}`}
                             />
                         </div>
-
                     ))}
                 </div>
             </div>
@@ -176,15 +229,10 @@ const DocxEditor = () => {
             />
 
             {/* Кнопка для открытия выбора файла */}
-            <button className='btn' onClick={() => document.getElementById('handleFileUpload').click()}>Выберите файл жен KIU.docx</button>
-            <button className='btn' style={{
-                bottom: '80px'
-            }} onClick={() => document.getElementById('handleFileUpload').click()}>Выберите файл муж KIU.docx</button>
+            <button className='btn' onClick={() => document.getElementById('handleFileUpload').click()}>Выберите файл KIU.docx</button>
 
             {/* Кнопка для замены текста в .docx */}
-            <button style={{
-                bottom: '170px'
-            }} className='btn' onClick={handleReplaceTextInDocx}>Заменить данные в .docx</button>
+            <button className='btn' style={{ bottom: '80px' }} onClick={handleReplaceTextInDocx}>Заменить данные в .docx</button>
         </div>
     );
 };
