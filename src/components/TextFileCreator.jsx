@@ -162,6 +162,7 @@ const DocxEditor = () => {
                                 placeholder={`Введите ${translateLabel(key)}`} // Переводим placeholder
                             />
                         </div>
+                        
                     ))}
                 </div>
             </div>
